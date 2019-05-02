@@ -27,6 +27,13 @@ const PropertySchema = new Schema({
   price: {
     type: Number
   },
+  images: [
+    {
+      name: String,
+      url: String
+    }
+  ],
+
   distribution: [
     {
       rooms: {
@@ -62,4 +69,4 @@ const PropertySchema = new Schema({
   ]
 });
 
-module.exports = Property = mongoose.model('property', PropertySchema);
+module.exports = Property = mongoose.model('properties', PropertySchema);
