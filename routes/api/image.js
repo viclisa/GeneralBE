@@ -13,27 +13,25 @@ const Image = require('../../models/Image');
 // @access  Public
 router.get('/test', (req, res) => res.json({ msg: 'Image Works' }));
 
-// @route   GET api/property
-// @desc    Get current users property
-// @access  Private
-router.get(
-  '/',
-  passport.authenticate('jwt', { session: false }),
-  (req, res) => {
-    const errors = {};
+// @route   GET api/images
+// @desc    Get all images
+// @access  Public
+router.get('/', (req, res) => {
+  Post.find()
+    .sort({ date: -1 })
+    .then(images => res.json(images))
+    .catch(err => res.status(404).json({ noimagesfound: 'No images found' }));
+});
 
-    Property.findOne({ property: req.property.id })
-      .populate('property', ['id'])
-      .then(image => {
-        if (!image) {
-          errors.noimage = 'There is no image for this property';
-          return res.status(404).json(errors);
-        }
-        res.json(image);
-      })
-      .catch(err => res.status(404).json(err));
-  }
-);
+// @route   GET api/images
+// @desc    Get property images
+// @access  Private
+router.get('/property/:propertyId', (req, res) => {
+  const query = { property: req.params.propertyId };
+  Image.find({ property: req.params.propertyId })
+    .then(images => res.json(images))
+    .catch(err => res.status(404).json({ noimagesfound: 'No images found' }));
+});
 
 // @route   POST api/image
 // @desc    Create or edit property image
@@ -48,11 +46,11 @@ router.post(
     imageFields.name = req.body.name;
     imageFields.url = req.body.url;
 
-    Image.findOne({ property: req.body.propertyId }).then(image => {
+    Image.findOne({ name: req.body.name }).then(image => {
       if (image) {
         // Update
         Image.findOneAndUpdate(
-          { property: req.body.propertyId },
+          { name: req.body.name },
           { $set: imageFields },
           { new: true }
         ).then(image => res.json(image));

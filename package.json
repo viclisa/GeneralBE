@@ -13,6 +13,7 @@
   "author": "Vicent Climent",
   "license": "MIT",
   "devDependencies": {
+    "image-webpack-loader": "^4.6.0",
     "nodemon": "^1.18.10"
   },
   "dependencies": {
